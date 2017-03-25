@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Error:</strong> {{ error }}
+        </div>
+    {% endif %}
+
+    <form action="./stats" method="POST">
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label>Player</label>
+                <select class="form-control" name="pid">
+                    <option value="0"></option>
+                    {% for player in players %}
+                        <option value="{{player.pid}}">{{player.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+
+    {% if p %}
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Name</td>
+                <td>{{p.name}}</td>
+              </tr>
+              <tr>
+                <td>Games Played</td>
+                <td>{{p.played}}</td>
+              </tr>
+              <tr>
+                <td>Wins</td>
+                <td>{{p.wins}}</td>
+              </tr>
+              <tr>
+                <td>Losses</td>
+                <td>{{p.losses}}</td>
+              </tr>
+              <tr>
+                <td>Differential</td>
+                <td>{{p.differential}}</td>
+              </tr>
+              <tr>
+                <td>Win Percentage</td>
+                <td>{{p.win_pct}}%</td>
+              </tr>
+              <tr>
+                <td>Streak</td>
+                <td>{{p.streak}}</td>
+              </tr>
+              <tr>
+                <td>Rating</td>
+                <td>{{p.rating}}</td>
+              </tr>
+              <tr>
+                <td>Last Played</td>
+                <td>{{p.last_played}}</td>
+              </tr>
+              <tr>
+                <td>Highest Differential</td>
+                <td>{{p.differential_peak}} at {{p.dp_obtained}}</td>
+              </tr>
+              <tr>
+                <td>Lowest Differential</td>
+                <td>{{p.differential_trough}} at {{p.dt_obtained}}</td>
+              </tr>
+              <tr>
+                <td>Highest Streak</td>
+                <td>{{p.streak_peak}} at {{p.sp_obtained}}</td>
+              </tr>
+              <tr>
+                <td>Lowest Streak</td>
+                <td>{{p.streak_trough}} at {{p.st_obtained}}</td>
+              </tr>
+              <tr>
+                <td>Highest Rating</td>
+                <td>{{p.rating_peak}} at {{p.rp_obtained}}</td>
+              </tr>
+              <tr>
+                <td>Lowest Rating</td>
+                <td>{{p.rating_trough}} at {{p.rt_obtained}}</td>
+              </tr>
+            </tbody>
+         </table>
+
+    {% endif %}
+
+{% endblock %}

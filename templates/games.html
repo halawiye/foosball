@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+    <table class="table table-striped" id ="table1">
+        <thead class="thead-default">
+          <tr>
+            <th>Player 1a</th>
+            <th>Player 1b</th>
+            <th>Player 2a</th>
+            <th>Player 2b</th>
+            <th>Game Time</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for g in game_list %}
+                <tr id = "row{{g[10]}}">
+                {% for i in range(9) %}
+                  {% if i % 2 == 0 %}<td  {% if i < 8 %} class="{% if g[9] == 1 and i < 4 or g[9] == 2 and i > 3%}success{%else%}danger{%endif%}" {% endif %} id ="row{{g[10]}}_{{i}}">{% endif %}{{g[i]}} {% if i %2 == 1 or  i == 8%}</td>{% endif %}
+                {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+
+
+
+
+
+{% endblock %}

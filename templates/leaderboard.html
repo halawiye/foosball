@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <ul class="nav nav-tabs">
+        {% for pair in leaders %}
+            <li {% if pair[0] == 'rating'%} class = "active" {% endif %}><a data-toggle="tab" href="#{{pair[0]}}">{{pair[1][0]}}</a></li>
+        {% endfor %}
+    </ul>
+
+    <div class="tab-content">
+        {% for pair in leaders %}
+          <div id="{{pair[0]}}" class="tab-pane fade {% if pair[0] == 'rating' %} in active {%endif%}">
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>{{pair[1][0]}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for p in pair[1][1] %}
+                      <tr>
+                        <td>{{p[1]}}</td>
+                        <td>{{p[2]}}</td>
+                      </tr>
+                    {% endfor %}
+                </tbody>
+             </table>
+          </div>
+        {% endfor %}
+    </div>
+
+
+
+
+
+
+{% endblock %}

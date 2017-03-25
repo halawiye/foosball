@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% if error %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Error:</strong> {{ error }}
+        </div>
+    {% endif %}
+
+
+
+
+
+
+    <form action="." method="POST">
+        <div class="row">
+            <legend>Enter result below: </legend>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-4">
+                <label>Team 1 Player A</label>
+                <select class="form-control" name="player1a">
+                    <option value="0"></option>
+                    {% for player in players %}
+                        <option value="{{player.pid}}">{{player.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-4">
+            <label>Team 1 Player B</label>
+            <select class="form-control" name="player1b">
+                <option value="0"></option>
+                {% for player in players %}
+                    <option value="{{player.pid}}">{{player.name}}</option>
+                {% endfor %}
+            </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class = "form-group">
+                <small class="form-text text-muted">versus</small>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-4">
+            <label>Team 2 Player A</label>
+            <select class="form-control" name="player2a">
+                <option value="0"></option>
+                {% for player in players %}
+                    <option value="{{player.pid}}">{{player.name}}</option>
+                {% endfor %}
+            </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-xs-4">
+            <label>Team 2 Player B</label>
+            <select class="form-control" name="player2b">
+                <option value="0"></option>
+                {% for player in players %}
+                    <option value="{{player.pid}}">{{player.name}}</option>
+                {% endfor %}
+            </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <p class ="form-text text-muted">Who won?</p>
+        </div>
+
+        <div class="row">
+            <div class="form-check form-check-inline">
+                 <label class="form-check-label">
+                     <input class="form-check-input" type="radio" name="oneWin" value="1" checked="checked"> Team 1
+                 </label>
+            </div>
+            <div class="form-check form-check-inline">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="oneWin" value="0"> Team 2
+                </label>
+            </div>
+        </div>
+
+        <div class="row">
+            <button type="submit" class= "btn btn-primary">Be judged</button>
+        </div>
+    </form>
+{% endblock %}
