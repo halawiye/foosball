@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+    <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Record</th>
+            <th>Athlete</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for pair in vs %}
+              <tr>
+                <td>{{pair[0]}}</td>
+                <td>{{pair[1][0]}}</td>
+                <td>{{pair[1][1]}}</td>
+              </tr>
+            {% endfor %}
+        </tbody>
+     </table>
+
+
+
+{% endblock %}
