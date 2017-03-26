@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 app.secret_key = cfg.KEY
 app.config["DEBUG"] = True
-app.config['SQLALCHEMY_TRACK MODIFICATIONS'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
     username=cfg.USER,
