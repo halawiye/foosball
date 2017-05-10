@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js'></script>
+<canvas id="chart" width="600" height="400"></canvas>
+
+    <script>
+
+   // bar chart data
+   var barData = {
+   datasets : [
+      {% for i in range(n) %}
+      {
+         pointRadius: 0,
+         borderColor: 'rgba{{playerColour(i,n)}}',
+         pointHitRadius: 5,
+         pointHoverRadius: 0,
+         fill: false,
+         label:"{{hist[i][0]}}",
+         steppedLine:true,
+         data : [{% for j in range(m[i]) %} { x:{{hist[i][1][0][j]}}, y:{{hist[i][1][1][j]}} } {% if j != m[i]-1 %}, {% endif %} {% endfor %}]
+      }{% if i != n-1 %},{% endif %}
+      {% endfor %}
+      ]
+   }
+
+   // get bar chart canvas
+   var mychart = document.getElementById("chart").getContext("2d");
+
+   // draw bar chart
+   new Chart(mychart,{type:"line", data:barData, options: {
+        scales: {
+            xAxes: [{
+                type: 'linear',
+                position: 'bottom'
+            }]
+        }, responsiveness:true,
+    }});
+
+</script>
+
+
+
+
+
+{% endblock %}

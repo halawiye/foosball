@@ -59,7 +59,7 @@ def recalculate():
         ids = [game.player1a, game.player1b, game.player2a, game.player2b]
         teams = [[game.player1a,game.player1b],[game.player2a,game.player2b]]
 
-        players = []
+        ps = []
         wins = []
 
         for i in range(2):
@@ -67,15 +67,15 @@ def recalculate():
                 p = Player.query.get(pid)
                 if p is None:
                     break
-                players.append(p)
+                ps.append(p)
                 if ((i == 0 and game.oneWin) or (i == 1 and not game.oneWin)):
                     wins.append(1)
                 else:
                     wins.append(0)
 
-        changes = updateElo(players, wins, game.date)
-        for i in range(len(players)):
-            updateIndividual(players[i],wins[i], game.date)
+        changes = updateElo(ps, wins, game.date)
+        for i in range(len(ps)):
+            updateIndividual(ps[i],wins[i], game.date)
 
         for tup in changes:
             idx = ids.index(tup[0].pid)

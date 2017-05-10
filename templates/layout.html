@@ -33,7 +33,7 @@
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav">
-                    {% for page in [('index','Form'), ('stats','Stats'), ('leaderboard','Leaderboard'), ('hof','Hall of Fame'), ('games', 'Game List')] %}
+                    {% for page in [('index','Form'), ('stats','Stats'), ('leaderboard','Leaderboard'), ('hof','Hall of Fame'), ('games', 'Game List'), ('history','Rating History')] %}
                         <li class = "{%- if request.path == url_for(page[0]) %} active {% endif %}"><a href="{{ url_for(page[0]) }}">{{ page[1] }}</a></li>
                     {% endfor %}
                 </ul>

@@ -255,5 +255,49 @@ def games():
     name_dict = {p.pid : p.name for p in players}
     name_dict[0] = ""
     game_list = [(name_dict[g.player1a], g.diff1a, name_dict[g.player1b], g.diff1b, name_dict[g.player2a], g.diff2a, name_dict[g.player2b], g.diff2b, g.date, 2 - g.oneWin, g.id) for g in gs]
-    #should probably validate the above
+
     return render_template("games.html",game_list=game_list)
+
+@app.route('/history', methods=['GET'])
+def history():
+    gs = Game.query.order_by(Game.date).all()
+    players = Player.query.all()
+    name_dict = {p.pid : p.name for p in players}
+    name_dict[0] = ""
+    hist_dict = {p.name:([0],[1500]) for p in players}
+    #should probably validate the below
+    for n,g in enumerate(gs):
+        for tup in [(g.player1a,g.diff1a),(g.player1b,g.diff1b),(g.player2a,g.diff2a),(g.player2b,g.diff2b)]:
+            p = name_dict[tup[0]]
+            if p == "":
+                continue
+            hist_dict[p][0].append(n+1)
+            hist_dict[p][1].append(hist_dict[p][1][-1]+tup[1])
+
+    hist_list = list(hist_dict.items())
+    hist_list.sort(key = lambda t : t[0])
+    n_games = [len(tup[0]) for _,tup in hist_list]
+
+    def playerColour(i,n):
+        seed = 0.8938123179670188
+        incr = 1.0/n
+        h,s,v = (seed + i*incr)%1 ,0.5,0.95
+        h_i = int(h*6)
+        f = h*6 - h_i
+        p = v * (1 - s)
+        q = v * (1 - f*s)
+        t = v * (1 - (1 - f) * s)
+        r, g, b = {
+            0: (v, t, p),
+            1: (q, v, p),
+            2: (p, v, t),
+            3: (p, q, v),
+            4: (t, p, v),
+            5: (v, p, q)
+        }[h_i]
+        return (int(r*256), int(g*256), int(b*256),1)
+
+
+
+    return render_template("history.html",hist=hist_list,n = len(hist_dict), m = n_games, playerColour=playerColour)
+
