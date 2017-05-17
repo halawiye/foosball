@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, request, url_for, flash
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import datetime
 import config as cfg
+import math
 
 app = Flask(__name__)
 
@@ -90,8 +91,74 @@ def updateIndividual(p,win, game_time):
             p.st_obtained = game_time
     p.win_pct = 100*p.wins/p.played
 
+def newRatingPeriod(players):
+    n_inactive = 2000
+    csq = (350**2 - 50**2)/n_inactive
+    for p in players:
+        p.rd = min(math.sqrt((p.rd)**2 + csq),350)
 
-def updateElo(ps, wins, game_time = datetime.utcnow()):
+
+def updateGlicko(ps, wins, game_time):
+    #validate lists
+    winners = [(ps[i],ps[i].rating,ps[i].rd) for i in range(len(ps)) if wins[i] == 1]
+    losers = [(ps[i],ps[i].rating,ps[i].rd) for i in range(len(ps)) if wins[i] == 0]
+
+    w_ensemble = 0;
+    w_rd = 0;
+    l_ensemble = 0;
+    l_rd = 0;
+    for p,r,rd in winners:
+        w_ensemble += r
+        w_rd += rd*rd
+    w_ensemble /= len(winners)
+    w_rd = math.sqrt(w_rd)/len(winners)
+    for p,r,rd in losers:
+        l_ensemble += r
+        l_rd += rd*rd
+    l_ensemble /= len(losers)
+    l_rd = math.sqrt(l_rd)/len(losers)
+    changes = []
+
+    q = math.log(10)/400
+    def g(rd):
+        return 1.0/(math.sqrt(1 + 3*(q*rd/math.pi)**2))
+    def e_s(r,r_j,rd_j):
+        return 1.0/(1 + pow(10,-g(rd_j)*(r - r_j)/400))
+
+    for p,r,rd in winners:
+        e = e_s(w_ensemble, l_ensemble, l_rd)
+        dsq = 1.0/(((q*g(l_rd))**2)*e*(1-e))
+
+        recip = 1.0/(1.0/(rd*rd) + 1.0/dsq)
+        diff = q*recip*g(l_rd)*(1-e)
+
+        p.rating = r + diff
+        p.rd = math.sqrt(recip)
+
+        changes.append((p,diff))
+        if(p.rating > p.rating_peak and p.rd <= 110):
+            p.rating_peak = p.rating
+            p.rp_obtained = game_time
+
+    for p,r,rd in losers:
+        e = e_s(l_ensemble, w_ensemble, w_rd)
+        dsq = 1.0/(((q*g(w_rd))**2)*e*(1-e))
+
+        recip = 1.0/(1.0/(rd*rd) + 1.0/dsq)
+        diff = q*recip*g(w_rd)*(-e)
+
+        p.rating = r + diff
+        p.rd = math.sqrt(recip)
+
+        changes.append((p,diff))
+        if(p.rating < p.rating_trough and p.rd <= 110):
+            p.rating_trough = p.rating
+            p.rt_obtained = game_time
+
+    return changes
+
+"""
+def updateElo(ps, wins, game_time):
     #validate lists
     winners = [(ps[i],ps[i].rating) for i in range(len(ps)) if wins[i] == 1]
     losers = [(ps[i],ps[i].rating) for i in range(len(ps)) if wins[i] == 0]
@@ -139,6 +206,7 @@ def updateElo(ps, wins, game_time = datetime.utcnow()):
             p.rt_obtained = game_time
 
     return changes
+"""
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -198,7 +266,8 @@ def index():
                 wins.append(0)
 
     now = datetime.utcnow()
-    changes = updateElo(ps, wins, now)
+    newRatingPeriod(players)
+    changes = updateGlicko(ps, wins, now)
     for i in range(len(ps)):
         updateIndividual(ps[i],wins[i], now)
 
@@ -238,7 +307,9 @@ def leaderboard():
     leader_stats = [("rating","Rating",True), ("win_pct","Win Percentage",True), ("streak","Streak",True)]
     if request.method == "GET":
         players=Player.query.all()
-        leaders = {k : (n,sorted([(p.pid, p.name, vars(p)[k]) for p in players],key = lambda tup: -1 if tup[2] is None else tup[2], reverse = b)) for k,n,b in leader_stats}
+        leaders = {k : (n,sorted([(p.pid, p.name, vars(p)[k], p.rd) for p in players],key = lambda tup: -1 if tup[2] is None else tup[2], reverse = b)) for k,n,b in leader_stats}
+        leaders_list = list(leaders.items())
+        leaders_list.sort()
         return render_template("leaderboard.html", leaders=leaders.items())
 
 @app.route('/hof', methods=['GET'])
@@ -247,8 +318,9 @@ def hof():
     if request.method == "GET":
         players=Player.query.all()
         vs = {n: f([(vars(p)[k],p.name) for p in players],key = lambda tup : tup[0]) for k,n,f in record_stats}
-
-        return render_template("hof.html", vs=vs.items())
+        vs_list = list(vs.items())
+        vs_list.sort()
+        return render_template("hof.html", vs=vs_list)
 
 @app.route('/games', methods=['GET'])
 def games():

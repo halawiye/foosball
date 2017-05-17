@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask_app import db, Player, Game, updateIndividual, updateElo
+from flask_app import db, Player, Game, updateIndividual, updateGlicko, newRatingPeriod
 
 def newPlayer(nom):
     epoch = datetime.utcfromtimestamp(0)
@@ -77,7 +77,8 @@ def recalculate():
                 else:
                     wins.append(0)
 
-        changes = updateElo(ps, wins, game.date)
+        newRatingPeriod(players)
+        changes = updateGlicko(ps, wins, game.date)
         for i in range(len(ps)):
             updateIndividual(ps[i],wins[i], game.date)
 
