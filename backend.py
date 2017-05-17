@@ -12,6 +12,8 @@ def newPlayer(nom):
         win_pct = None,
         streak = 0,
         rating = 1500,
+        rd = 350,
+        tau = 0.06,
         streak_peak = 0,
         streak_trough = 0,
         rating_peak = 1500,
@@ -39,6 +41,8 @@ def recalculate():
         p.win_pct = None
         p.streak = 0
         p.rating = 1500
+        p.rd = 350
+        p.tau = 0.06
         p.streak_peak = 0
         p.streak_trough = 0
         p.rating_peak = 1500

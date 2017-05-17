@@ -49,6 +49,8 @@ class Player(db.Model):
     win_pct = db.Column(db.Float)
     streak = db.Column(db.Integer)
     rating = db.Column(db.Float)
+    rd = db.Column(db.Float)
+    tau = db.Column(db.Float)
     streak_peak = db.Column(db.Integer)
     streak_trough = db.Column(db.Integer)
     rating_peak= db.Column(db.Float)
