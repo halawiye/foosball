@@ -2,42 +2,56 @@
 {% block content %}
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js'></script>
-<canvas id="chart" width="1920" height="1080"></canvas>
 
-    <script>
 
-   // bar chart data
-   var barData = {
-   datasets : [
-      {% for i in range(n) %}
-      {
-         pointRadius: 0,
-         borderColor: 'rgba{{playerColour(i,n)}}',
-         pointHitRadius: 5,
-         pointHoverRadius: 0,
-         fill: false,
-         label:"{{hist[i][0]}}",
-         steppedLine:true,
-         data : [{% for j in range(m[i]) %} { x:{{hist[i][1][0][j]}}, y:{{hist[i][1][1][j]}} } {% if j != m[i]-1 %}, {% endif %} {% endfor %}]
-      }{% if i != n-1 %},{% endif %}
-      {% endfor %}
-      ]
-   }
+    <ul class="nav nav-tabs">
+        {% for tup in histories %}
+            <li {% if tup[0] == 'rating'%} class = "active" {% endif %}><a data-toggle="tab" href="#{{tup[0]}}">{{tup[1]}}</a></li>
+        {% endfor %}
+    </ul>
 
-   // get bar chart canvas
-   var mychart = document.getElementById("chart").getContext("2d");
+    <div class="tab-content">
+        {% for tup in histories %}
+            <div id="{{tup[0]}}" class="tab-pane fade {% if tup[0] == 'rating' %} in active {%endif%}">
+                <canvas id="chart_{{tup[0]}}" width="1920" height="1080"></canvas>
+                <script>
+                    // histories = [("rating", "Rating", hist_list, len(hist_dict), n_games),("team_rating","Team Rating", team_hist_list, len(team_hist_dict), team_n_games)]
+                   // bar chart data
+                   var barData = {
+                   datasets : [
+                      {% for i in range(tup[3]) %}
+                      {
+                         pointRadius: 0,
+                         borderColor: 'rgba{{playerColour(i,tup[3])}}',
+                         pointHitRadius: 5,
+                         pointHoverRadius: 0,
+                         fill: false,
+                         label:"{{tup[2][i][0]}}",
+                         steppedLine:true,
+                         data : [{% for j in range(tup[4][i]) %} { x:Math.floor({{tup[2][i][1][0][j]}}), y:Math.floor({{tup[2][i][1][1][j]}}) } {% if j != tup[4][i]-1 %}, {% endif %} {% endfor %}]
+                      }{% if i != tup[3]-1 %},{% endif %}
+                      {% endfor %}
+                      ]
+                   }
 
-   // draw bar chart
-   new Chart(mychart,{type:"line", data:barData, options: {
-        scales: {
-            xAxes: [{
-                type: 'linear',
-                position: 'bottom'
-            }]
-        }, responsiveness:true,
-    }});
+                   // get bar chart canvas
+                   var mychart = document.getElementById("chart_{{tup[0]}}").getContext("2d");
 
-</script>
+                   // draw bar chart
+                   new Chart(mychart,{type:"line", data:barData, options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'linear',
+                                position: 'bottom'
+                            }]
+                        }, responsiveness:true,
+                    }});
+
+                </script>
+            </div>
+        {% endfor %}
+    </div>
+
 
 
 

@@ -21,7 +21,7 @@
                     {% for p in pair[1][1] %}
                       <tr>
                         <td>{{p[1]}}</td>
-                        <td>{{p[2]}}{% if pair[0] == 'rating' and p[3] > 110 %}?{% endif %}</td>
+                        <td>{{p[2]}}{% if pair[0] == 'rating' and p[3] > 110  or pair[0] == 'team_rating' and p[4] > 110%}?{% endif %}</td>
                       </tr>
                     {% endfor %}
                 </tbody>

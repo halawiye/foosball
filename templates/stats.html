@@ -66,8 +66,16 @@
                 <td>{{p.rating}}</td>
               </tr>
               <tr>
+                <td>Team Rating</td>
+                <td>{{p.team_rating}}</td>
+              </tr>
+              <tr>
                 <td>Ratings Deviation</td>
                 <td>{{p.rd}}</td>
+              </tr>
+              <tr>
+                <td>Team Ratings Deviation</td>
+                <td>{{p.team_rd}}</td>
               </tr>
               <tr>
                 <td>Last Played</td>
@@ -95,6 +103,14 @@
               </tr>
               <tr>
                 <td>Lowest Rating</td>
+                <td>{{p.rating_trough}} at {{p.rt_obtained}}</td>
+              </tr>
+              <tr>
+                <td>Highest Team Rating</td>
+                <td>{{p.rating_peak}} at {{p.rp_obtained}}</td>
+              </tr>
+              <tr>
+                <td>Lowest Team Rating</td>
                 <td>{{p.rating_trough}} at {{p.rt_obtained}}</td>
               </tr>
             </tbody>
