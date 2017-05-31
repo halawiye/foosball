@@ -348,7 +348,7 @@ def stats():
 
 @app.route('/leaderboard', methods=['GET'])
 def leaderboard():
-    leader_stats = [("rating","Rating",True), ("team_rating","Team Rating",True), ("win_pct","Win Percentage",True), ("streak","Win/Loss Streak",True)]
+    leader_stats = [("rating","Solo Rating",True), ("team_rating","Team Rating",True), ("win_pct","Win Percentage",True), ("streak","Win/Loss Streak",True)]
     if request.method == "GET":
         players=Player.query.all()
         leaders = {k : (n,sorted([(p.pid, p.name, vars(p)[k], p.rd, p.team_rd) for p in players],key = lambda tup: -1 if tup[2] is None else tup[2], reverse = b)) for k,n,b in leader_stats}
@@ -358,7 +358,7 @@ def leaderboard():
 
 @app.route('/hof', methods=['GET'])
 def hof():
-    record_stats = [("played","Most Games Played",max), ("rating_peak","Highest Rating Achieved",max), ("rating_trough","Lowest Rating Achieved",min), ("team_rating_peak","Highest Team Rating Achieved",max), ("team_rating_trough","Lowest Team Rating Achieved",min), ("streak_peak","Longest Win Streak",max), ("streak_trough","Longest Loss Streak",min)]
+    record_stats = [("played","Most Games Played",max), ("rating_peak","Highest Solo Rating Achieved",max), ("rating_trough","Lowest Solo Rating Achieved",min), ("team_rating_peak","Highest Team Rating Achieved",max), ("team_rating_trough","Lowest Team Rating Achieved",min), ("streak_peak","Longest Win Streak",max), ("streak_trough","Longest Loss Streak",min)]
     if request.method == "GET":
         players=Player.query.all()
         vs = {n: f([(vars(p)[k],p.name) for p in players],key = lambda tup : tup[0]) for k,n,f in record_stats}
@@ -433,7 +433,7 @@ def history():
         }[h_i]
         return (int(r*256), int(g*256), int(b*256),1)
 
-    histories = [("rating", "Rating", hist_list, len(hist_dict), n_games),("team_rating","Team Rating", team_hist_list, len(team_hist_dict), team_n_games)]
+    histories = [("rating", "Solo Rating", hist_list, len(hist_dict), n_games),("team_rating","Team Rating", team_hist_list, len(team_hist_dict), team_n_games)]
 
 
     return render_template("history.html",histories=histories, playerColour=playerColour)
